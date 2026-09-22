@@ -1,0 +1,6 @@
+{
+  "name": "CipherVault Enterprise",
+  "description": "Enhanced CP-ABE Based Secure Cloud File Sharing Platform with Hybrid AES-256 Encryption, SHA-256 Integrity Verification, Role & Attribute-Based Access Control, and Security Monitoring.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

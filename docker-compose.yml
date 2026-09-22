@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  ciphervault-db:
+    image: mysql:8.4
+    container_name: ciphervault_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_master_pass
+      MYSQL_DATABASE: ciphervault
+      MYSQL_USER: ciphervault_app
+      MYSQL_PASSWORD: vault_secure_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ciphervault_mysql_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - ciphervault-net
+
+  ciphervault-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ciphervault_api
+    restart: unless-stopped
+    depends_on:
+      - ciphervault-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://ciphervault-db:3306/ciphervault?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ciphervault_app
+      SPRING_DATASOURCE_PASSWORD: vault_secure_pass
+      CIPHERVAULT_JWT_SECRET: 9a3f2c5d8e7b1a4f6c8d2e5b7a9c1d3f5e7a9b2c4d6f8a1c3e5b7d9f2a4c6e8b
+    ports:
+      - "8080:8080"
+    networks:
+      - ciphervault-net
+
+networks:
+  ciphervault-net:
+    driver: bridge
+
+volumes:
+  ciphervault_mysql_data:
